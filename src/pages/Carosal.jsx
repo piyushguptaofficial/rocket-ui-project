@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import CourseCard from "../components/CourseCard";
+import Skeleton from "../components/Skeleton";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
-
-// 📦 Course Data
 const COURSE_SLIDES = [
   {
     title: "Design Motion Course",
@@ -72,6 +71,7 @@ const Carousel = () => {
   const [index, setIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(3);
   const [enableTransition, setEnableTransition] = useState(true);
+  const [loading, setLoading] = useState(true);
   const autoplayRef = useRef(null);
 
   const extendedSlides = [...COURSE_SLIDES, ...COURSE_SLIDES.slice(0, slidesToShow)];
@@ -88,6 +88,11 @@ const Carousel = () => {
     updateSlidesToShow();
     window.addEventListener("resize", updateSlidesToShow);
     return () => window.removeEventListener("resize", updateSlidesToShow);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
   }, []);
 
   const startAutoplay = () => {
@@ -161,25 +166,35 @@ const Carousel = () => {
 
       {/* Carousel Content */}
       <div className="overflow-hidden pb-8">
-        <motion.div
-          className="flex"
-          animate={{ x: translateX }}
-          transition={
-            enableTransition
-              ? { type: "spring", stiffness: 100, damping: 20 }
-              : { duration: 0 }
-          }
-        >
-          {extendedSlides.map((card, idx) => (
-            <div
-              key={idx}
-              className="flex-shrink-0 px-2"
-              style={{ width: `${100 / slidesToShow}%` }}
-            >
-              <CourseCard {...card} />
-            </div>
-          ))}
-        </motion.div> 
+        {loading ? (
+          <div className="flex gap-4">
+            {Array.from({ length: slidesToShow }).map((_, idx) => (
+              <div key={idx} className="w-full">
+                <Skeleton className="h-72 w-full rounded-xl" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            className="flex"
+            animate={{ x: translateX }}
+            transition={
+              enableTransition
+                ? { type: "spring", stiffness: 100, damping: 20 }
+                : { duration: 0 }
+            }
+          >
+            {extendedSlides.map((card, idx) => (
+              <div
+                key={idx}
+                className="flex-shrink-0 px-2"
+                style={{ width: `${100 / slidesToShow}%` }}
+              >
+                <CourseCard {...card} />
+              </div>
+            ))}
+          </motion.div>
+        )}
       </div>
 
       {/* Mobile/Tablet Bottom Navigation */}
