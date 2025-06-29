@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Hero from '../pages/Hero';
+import VSSER from '../pages/VSSER';
 import About from '../pages/About';
 import Course from '../pages/Course';
 import Testimonial from '../pages/Testimonials';
@@ -19,6 +20,7 @@ const RootLayout = () => {
       <Navbar />
       <main>
         <section id="home"><Hero /></section>
+        <section id='VSSER'><VSSER /></section>
         <section id="about"><About /></section>
         {/* <section id="course"><Course /></section> */}
         <section id="SuccessSection"><SuccessSection /></section>
