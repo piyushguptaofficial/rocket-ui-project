@@ -6,6 +6,7 @@ const SkeletonHeroCard = () => (
   <div className="animate-pulse bg-gradient-to-br from-purple-900 to-blue-900 border-purple-600 rounded-2xl w-[300px] h-[150px] p-6">
     <div className="w-32 h-5 bg-gray-700 rounded mb-4" />
     <div className="w-48 h-3 bg-gray-700 rounded" />
+    
   </div>
 );
 
