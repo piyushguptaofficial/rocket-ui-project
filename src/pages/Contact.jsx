@@ -39,12 +39,12 @@ function Contact() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex justify-center items-center bg-[#0f0f1b]">
-        <Skeleton className="w-full max-w-6xl h-[80vh]" />
-      </div>
-    );
-  }
+  return (
+    <div className="min-h-screen flex justify-center items-center bg-[#0f0f1b]">
+      <div className="w-full max-w-6xl h-[80vh] bg-gray-700 rounded animate-pulse" />
+    </div>
+  );
+}
 
   return (
     <section
