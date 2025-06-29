@@ -1,5 +1,5 @@
 /* src/components/Contact.jsx */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   FaMapMarkerAlt,
@@ -7,26 +7,25 @@ import {
   FaEnvelope,
   FaClock,
 } from 'react-icons/fa';
+import Skeleton from '../components/Skeleton';
 
-/* Google-maps “embed” URL */
 const MAP_URL =
   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.090698343399!2d77.02916631508269!3d28.62899798241706!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0f5c6f8a8f0f%3A0x9e3c5b3c5b3c5b3c!2sIndia%20Gate%2C%20New%20Delhi%2C%20Delhi%20110021!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin';
 
 function Contact() {
-  /* ─── react-hook-form setup ─────────────────────────────── */
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting, isSubmitSuccessful },
-  } = useForm({ mode: 'onBlur' }); // validate on blur for instant feedback[3]
+  } = useForm({ mode: 'onBlur' });
 
   const [apiError, setApiError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const onSubmit = async (data) => {
     setApiError('');
     try {
-      /* 🔗 send “data” to your API / e-mail service */
       await new Promise((r) => setTimeout(r, 800));
       reset();
     } catch {
@@ -34,18 +33,29 @@ function Contact() {
     }
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-[#0f0f1b]">
+        <Skeleton className="w-full max-w-6xl h-[80vh]" />
+      </div>
+    );
+  }
+
   return (
     <section
       id="contact"
       className="relative overflow-hidden bg-[#0f0f1b] dark:text-white"
       aria-labelledby="contact-heading"
     >
-      {/* Decorative background shapes (purely presentational) */}
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[#0f0f1b]" />
       <div aria-hidden="true" className="absolute -top-12 -left-24 h-96 w-96 rounded-full bg-[#0f0f1b] blur-3xl opacity-60 animate-pulse-slow" />
       <div aria-hidden="true" className="absolute -bottom-12 -right-24 h-96 w-96 rounded-full bg-[#0f0f1b] blur-3xl opacity-60 animate-pulse-slow animation-delay-4000" />
 
-      {/* Heading */}
       <header className="mx-auto mb-16 max-w-3xl px-4 text-center">
         <h2 id="contact-heading" className="text-4xl font-bold md:text-5xl">
           Get&nbsp;In&nbsp;
@@ -58,13 +68,10 @@ function Contact() {
         </p>
       </header>
 
-      {/* 2-column layout */}
       <div className="container mx-auto grid max-w-6xl gap-8 px-4 lg:grid-cols-2">
-        {/* ──────────────────── Form ──────────────────── */}
         <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
           <h3 className="mb-6 text-xl font-semibold">Send us a message</h3>
 
-          {/* Live region announces status to screen-readers[5][7] */}
           <div role="status" aria-live="polite" className="sr-only">
             {isSubmitSuccessful && 'Message sent successfully'}
             {apiError && apiError}
@@ -75,7 +82,6 @@ function Contact() {
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-6"
           >
-            {/* Name */}
             <div>
               <label htmlFor="name" className="mb-1 block text-sm font-medium">
                 Name
@@ -97,7 +103,6 @@ function Contact() {
               )}
             </div>
 
-            {/* Email */}
             <div>
               <label htmlFor="email" className="mb-1 block text-sm font-medium">
                 Email
@@ -125,7 +130,6 @@ function Contact() {
               )}
             </div>
 
-            {/* Message */}
             <div>
               <label htmlFor="message" className="mb-1 block text-sm font-medium">
                 Message
@@ -147,7 +151,6 @@ function Contact() {
               )}
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -156,7 +159,6 @@ function Contact() {
               {isSubmitSuccessful ? 'Sent ✔︎' : 'Send Message'}
             </button>
 
-            {/* API-level error */}
             {apiError && (
               <p role="alert" className="mt-3 text-sm text-red-600">
                 {apiError}
@@ -165,14 +167,11 @@ function Contact() {
           </form>
         </div>
 
-        {/* ───────────────── Contact info + map ───────────────── */}
         <div className="space-y-6">
-          {/* Info card */}
           <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h3 className="mb-6 text-xl font-semibold">Contact information</h3>
 
             <ul className="space-y-4">
-              {/* Location */}
               <li className="flex gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-100 p-3 dark:bg-cyan-900/30">
                   <FaMapMarkerAlt className="h-5 w-5 text-cyan-600 dark:text-cyan-400" aria-hidden />
@@ -183,7 +182,6 @@ function Contact() {
                 </address>
               </li>
 
-              {/* Phone */}
               <li className="flex gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-100 p-3 dark:bg-cyan-900/30">
                   <FaPhoneAlt className="h-5 w-5 text-cyan-600 dark:text-cyan-400" aria-hidden />
@@ -196,7 +194,6 @@ function Contact() {
                 </div>
               </li>
 
-              {/* Email */}
               <li className="flex gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-100 p-3 dark:bg-cyan-900/30">
                   <FaEnvelope className="h-5 w-5 text-cyan-600 dark:text-cyan-400" aria-hidden />
@@ -212,7 +209,6 @@ function Contact() {
                 </div>
               </li>
 
-              {/* Hours */}
               <li className="flex gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-100 p-3 dark:bg-cyan-900/30">
                   <FaClock className="h-5 w-5 text-cyan-600 dark:text-cyan-400" aria-hidden />
@@ -225,7 +221,6 @@ function Contact() {
             </ul>
           </div>
 
-          {/* Map */}
           <div className="overflow-hidden rounded-lg bg-white shadow-lg dark:bg-gray-800">
             <div className="relative w-full pt-[56.25%]">
               <iframe
