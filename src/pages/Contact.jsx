@@ -7,7 +7,7 @@ import {
   FaEnvelope,
   FaClock,
 } from 'react-icons/fa';
-import Skeleton from '../components/Skeleton';
+// import Skeleton from '../components/Skeleton';
 
 const MAP_URL =
   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.090698343399!2d77.02916631508269!3d28.62899798241706!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0f5c6f8a8f0f%3A0x9e3c5b3c5b3c5b3c!2sIndia%20Gate%2C%20New%20Delhi%2C%20Delhi%20110021!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin';
