@@ -45,10 +45,34 @@ const testimonials = [
   },
 ];
 
+// Skeleton card for loading state
+const SkeletonCard = () => (
+  <div className="animate-pulse bg-gradient-to-br from-purple-900 to-blue-900 border-purple-600 rounded-2xl w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-sm p-6">
+    <div className="w-24 h-4 bg-gray-700 rounded mb-4" />
+    <div className="h-3 bg-gray-700 rounded w-full mb-2" />
+    <div className="h-3 bg-gray-700 rounded w-5/6 mb-2" />
+    <div className="h-3 bg-gray-700 rounded w-3/4 mb-4" />
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 bg-gray-700 rounded-full" />
+      <div className="flex flex-col gap-2">
+        <div className="w-24 h-3 bg-gray-700 rounded" />
+        <div className="w-16 h-2 bg-gray-700 rounded" />
+      </div>
+    </div>
+  </div>
+);
+
 export default function TestimonialCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
-  const [expanded, setExpanded] = useState({}); // Tracks which testimonials are expanded
+  const [expanded, setExpanded] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -84,51 +108,57 @@ export default function TestimonialCarousel() {
   return (
     <div className="relative bg-[#0f0f1b] text-white px-4 sm:px-6 py-20 min-h-screen overflow-hidden">
       <div className="flex justify-center flex-wrap gap-6 transition-all duration-500">
-        {testimonials.slice(currentIndex, currentIndex + itemsPerPage).map((t, i) => {
-          const index = currentIndex + i;
-          const isExpanded = expanded[index];
-          const cleanText = t.text.replace(/<[^>]+>/g, ""); // remove <mark> tags for truncation
-          const displayText = isExpanded
-            ? t.text
-            : cleanText.length > 200
-            ? `${cleanText.slice(0, 200)}...`
-            : t.text;
+        {loading
+          ? Array.from({ length: itemsPerPage }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))
+          : testimonials
+              .slice(currentIndex, currentIndex + itemsPerPage)
+              .map((t, i) => {
+                const index = currentIndex + i;
+                const isExpanded = expanded[index];
+                const cleanText = t.text.replace(/<[^>]+>/g, "");
+                const displayText = isExpanded
+                  ? t.text
+                  : cleanText.length > 200
+                  ? `${cleanText.slice(0, 200)}...`
+                  : t.text;
 
-          return (
-            <div
-              key={index}
-              className="bg-gradient-to-br from-purple-800 to-blue-800 border border-purple-500 rounded-2xl w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-sm p-6 hover:scale-105 hover:shadow-xl hover:shadow-purple-700 transition-transform duration-300"
-            >
-              <div className="mb-4 text-xl">{"★".repeat(t.stars)}</div>
-              <p
-                className="text-white text-sm leading-relaxed mb-3"
-                dangerouslySetInnerHTML={{ __html: `"${displayText}"` }}
-              />
-              {cleanText.length > 200 && (
-                <button
-                  onClick={() => toggleExpand(index)}
-                  className="text-xs text-blue-300 underline mb-4"
-                >
-                  {isExpanded ? "Read less" : "Read more"}
-                </button>
-              )}
-              <div className="flex items-center gap-3">
-                <img
-                  src={t.image}
-                  className="w-10 h-10 rounded-full object-cover"
-                  alt={t.name}
-                />
-                <div>
-                  <h4 className="font-semibold">{t.name}</h4>
-                  <p className="text-sm text-gray-300">{t.title}</p>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+                return (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-purple-800 to-blue-800 border border-purple-500 rounded-2xl w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-sm p-6 hover:scale-105 hover:shadow-xl hover:shadow-purple-700 transition-transform duration-300"
+                  >
+                    <div className="mb-4 text-xl">{"★".repeat(t.stars)}</div>
+                    <p
+                      className="text-white text-sm leading-relaxed mb-3"
+                      dangerouslySetInnerHTML={{ __html: `"${displayText}"` }}
+                    />
+                    {cleanText.length > 200 && (
+                      <button
+                        onClick={() => toggleExpand(index)}
+                        className="text-xs text-blue-300 underline mb-4"
+                      >
+                        {isExpanded ? "Read less" : "Read more"}
+                      </button>
+                    )}
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={t.image}
+                        className="w-10 h-10 rounded-full object-cover"
+                        alt={t.name}
+                      />
+                      <div>
+                        <h4 className="font-semibold">{t.name}</h4>
+                        <p className="text-sm text-gray-300">{t.title}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
       </div>
 
-      {/* Side Arrows */}
+      {/* Arrows */}
       <button
         onClick={prev}
         disabled={currentIndex === 0}
@@ -146,3 +176,4 @@ export default function TestimonialCarousel() {
     </div>
   );
 }
+
