@@ -31,6 +31,9 @@ const tabData = [
 
 const SuccessSection = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const handleImageLoad = () => setImageLoading(false);
 
   return (
     <section
@@ -56,13 +59,16 @@ const SuccessSection = () => {
             {tabData.map((tab, i) => (
               <button
                 key={i}
-                onClick={() => setActiveTab(i)}
+                onClick={() => {
+                  setActiveTab(i);
+                  setImageLoading(true); // reset skeleton when tab changes
+                }}
                 className={`text-left px-5 py-3 rounded-lg font-semibold transition-all duration-300
-                ${
-                  activeTab === i
-                    ? "bg-[var(--color-accent-from)] text-white shadow-md"
-                    : "bg-[var(--color-section)] hover:bg-slate-700 text-[var(--color-subtext)]"
-                }`}
+                  ${
+                    activeTab === i
+                      ? "bg-[var(--color-accent-from)] text-white shadow-md"
+                      : "bg-[var(--color-section)] hover:bg-slate-700 text-[var(--color-subtext)]"
+                  }`}
               >
                 {tab.title}
               </button>
@@ -83,19 +89,25 @@ const SuccessSection = () => {
                 backdropFilter: "blur(10px)",
               }}
             >
-              {/* Image */}
-              <div className="w-full h-56 sm:h-64 md:h-72 overflow-hidden">
+              {/* Image with Skeleton */}
+              <div className="w-full h-56 sm:h-64 md:h-72 relative">
+                {imageLoading && (
+                  <div className="absolute inset-0 z-10 bg-gray-700/40 animate-pulse" />
+                )}
                 <motion.img
                   src={tabData[activeTab].image}
                   alt={tabData[activeTab].title}
                   initial={{ opacity: 0.7, scale: 1.02 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="w-full h-full object-cover"
+                  onLoad={handleImageLoad}
+                  className={`w-full h-full object-cover transition-opacity duration-700 ${
+                    imageLoading ? "opacity-0" : "opacity-100"
+                  }`}
                 />
               </div>
 
-              {/* Text */}
+              {/* Text Content */}
               <div className="p-6 sm:p-8">
                 <h3
                   className="text-xl sm:text-2xl font-semibold mb-3"
